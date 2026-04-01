@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noxx - Webhook Sp4mmer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255, 20, 147, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .text-glow { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+        .attack-btn {
+            background: linear-gradient(90deg, #dc2626, #991b1b);
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+        }
+        .attack-btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 0 40px rgba(220, 38, 38, 0.6);
+        }
+        .attack-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #FFD700, #FF1493);
+            transition: width 0.3s;
+            border-radius: 9999px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #FFD700 !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        .rounded-card {
+            border-radius: 24px;
+        }
+        .rounded-input {
+            border-radius: 12px;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body class="min-h-screen text-white">
+    <nav class="flex items-center justify-between px-8 py-6 border-b border-yellow-400/20 bg-black/50 backdrop-blur-sm">
+        <a href="/" class="text-3xl font-black tracking-tighter text-yellow-400 hover:text-yellow-300 transition-colors">Noxx</a>
+        <div class="flex items-center gap-8">
+            <a href="#features" class="text-sm font-bold tracking-widest hover:text-yellow-400 transition-colors">FEATURES</a>
+            <a href="#bots" class="text-sm font-bold tracking-widest hover:text-yellow-400 transition-colors">BOTS</a>
+            <a href="/webhook.html" class="text-sm font-bold tracking-widest text-yellow-400 border-b-2 border-yellow-400">WEBHOOK</a>
+            <a href="#contact" class="text-sm font-bold tracking-widest hover:text-yellow-400 transition-colors">CONTACT</a>
+            <a href="#discord" class="bg-yellow-400 text-black px-6 py-2 font-bold hover:bg-yellow-300 transition-colors rounded-xl">JOIN DISCORD</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-16 max-w-4xl relative">
+        <a href="/" class="inline-flex items-center gap-2 text-gray-400 hover:text-yellow-400 mb-8 transition-colors font-bold tracking-wider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+            BACK TO HOME
+        </a>
+
+        <div class="relative">
+            <div class="absolute -top-4 -left-4 w-24 h-24 bg-yellow-400 transform rotate-12 opacity-20 rounded-2xl -z-10"></div>
+            <div class="absolute -bottom-4 -right-4 w-32 h-32 bg-pink-500 rounded-full opacity-20 -z-10"></div>
+
+            <div class="relative bg-zinc-900/80 backdrop-blur-sm border-2 border-yellow-400 p-8 md:p-12 rounded-card">
+                <div class="flex items-center gap-4 mb-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="#dc2626" stroke="#dc2626" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <div>
+                        <h1 class="text-4xl md:text-6xl font-black tracking-tighter text-white">Noxx <span class="text-red-600 text-glow">Sp4mmer</span></h1>
+                        <p class="text-yellow-400 font-bold tracking-widest mt-2">WEBHOOK UTILITY</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-yellow-400 font-bold tracking-wider mb-2 text-sm">WEBHOOK URL</label>
+                        <input type="text" id="webhook" placeholder="https://discord.com/api/webhooks/..." class="w-full bg-black border-2 border-zinc-700 text-white placeholder:text-zinc-600 h-12 px-4 rounded-input">
+                    </div>
+
+                    <div>
+                        <label class="block text-yellow-400 font-bold tracking-wider mb-2 text-sm">MESSAGE CONTENT</label>
+                        <textarea id="message" placeholder="Enter your message here..." class="w-full bg-black border-2 border-zinc-700 text-white placeholder:text-zinc-600 min-h-[120px] p-4 rounded-input resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-yellow-400 font-bold tracking-wider mb-2 text-sm">NUMBER OF MESSAGES (MAX: 1000)</label>
+                        <input type="number" id="count" min="1" max="1000" value="1" class="bg-black border-2 border-zinc-700 text-white h-12 px-4 rounded-input w-full md:w-48">
+                    </div>
+
+                    <div id="status" class="hidden border-2 p-4 rounded-xl">
+                        <p id="statusText" class="font-bold tracking-wider"></p>
+                    </div>
+
+                    <div id="progressSection" class="hidden space-y-2">
+                        <div class="flex justify-between text-sm font-bold tracking-wider">
+                            <span class="text-yellow-400">PROGRESS</span>
+                            <span id="percentText" class="text-pink-500">0%</span>
+                        </div>
+                        <div class="w-full h-4 bg-zinc-800 border border-zinc-700 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs font-bold">
+                            <span class="text-green-400">SUCCESS: <span id="successCount">0</span></span>
+                            <span class="text-red-400">FAILED: <span id="failCount">0</span></span>
+                        </div>
+                    </div>
+
+                    <button id="attackBtn" onclick="startSpam()" class="w-full h-20 text-3xl md:text-4xl font-black tracking-widest attack-btn text-white disabled:opacity-50 disabled:cursor-not-allowed">Attackkkk!!!</button>
+
+                    <div class="flex items-start gap-3 bg-yellow-400/10 border border-yellow-400/30 p-4 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                        <p class="text-sm text-zinc-400 font-medium"><span class="text-yellow-400 font-bold">WARNING:</span> Rate: 1 message per 0.5 seconds. Sending 1000 messages takes ~8 minutes. Only use on webhooks you own.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function startSpam() {
+            const webhook = document.getElementById('webhook').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const count = parseInt(document.getElementById('count').value);
+            const btn = document.getElementById('attackBtn');
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const progressSection = document.getElementById('progressSection');
+            const progressBar = document.getElementById('progressBar');
+            const percentText = document.getElementById('percentText');
+            const successEl = document.getElementById('successCount');
+            const failEl = document.getElementById('failCount');
+
+            if (!webhook.includes('discord.com/api/webhooks')) {
+                showStatus('Please enter a valid Discord webhook URL', 'error');
+                return;
+            }
+
+            if (!message) {
+                showStatus('Please enter a message', 'error');
+                return;
+            }
+
+            if (!count || count < 1 || count > 1000) {
+                showStatus('Please enter a number between 1 and 1000', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'ATTACKING...';
+            progressSection.classList.remove('hidden');
+            showStatus(`Initializing... Sending ${count} messages`, 'info');
+
+            let successCount = 0;
+            let failCount = 0;
+            const delay = 500; // 0.5 seconds = 1 message
+
+            for (let i = 0; i < count; i++) {
+                try {
+                    const response = await fetch(webhook, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            content: message,
+                            username: 'Noxx Sp4mmer',
+                            avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png'
+                        })
+                    });
+
+                    if (response.status === 204 || response.status === 200) {
+                        successCount++;
+                    } else if (response.status === 429) {
+                        const retryAfter = response.headers.get('Retry-After') || 5;
+                        showStatus(`Rate limited! Waiting ${retryAfter}s...`, 'info');
+                        await sleep(retryAfter * 1000);
+                        i--;
+                        continue;
+                    } else {
+                        failCount++;
+                    }
+                } catch (error) {
+                    failCount++;
+                }
+
+                const percent = Math.round(((i + 1) / count) * 100);
+                progressBar.style.width = percent + '%';
+                percentText.textContent = percent + '%';
+                successEl.textContent = successCount;
+                failEl.textContent = failCount;
+                showStatus(`Progress: ${i + 1}/${count} | Success: ${successCount} | Failed: ${failCount}`, 'info');
+
+                if (i < count - 1) await sleep(delay);
+            }
+
+            if (failCount === 0) {
+                showStatus(`✅ Complete! ${successCount} messages sent successfully!`, 'success');
+            } else {
+                showStatus(`⚠️ Complete! Success: ${successCount}, Failed: ${failCount}`, 'info');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Attackkkk!!!';
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function showStatus(msg, type) {
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+
+            status.className = 'border-2 p-4 rounded-xl';
+
+            if (type === 'success') {
+                status.classList.add('border-green-500', 'text-green-400', 'bg-green-900/20');
+            } else if (type === 'error') {
+                status.classList.add('border-red-500', 'text-red-400', 'bg-red-900/20');
+            } else {
+                status.classList.add('border-yellow-400', 'text-yellow-400', 'bg-yellow-900/20');
+            }
+
+            statusText.textContent = msg;
+            status.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
